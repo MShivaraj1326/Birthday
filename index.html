@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Surprise 🎉</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Segoe UI,sans-serif;
+}
+
+body{
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* 🔒 PASSWORD SCREEN */
+#lockScreen{
+  position:fixed;
+  inset:0;
+  background:#000000cc;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:10;
+}
+
+.lockBox{
+  background:#fff;
+  padding:30px;
+  border-radius:18px;
+  text-align:center;
+  width:90%;
+  max-width:320px;
+}
+
+.lockBox h2{margin-bottom:10px}
+.lockBox input{
+  width:100%;
+  padding:10px;
+  margin:12px 0;
+}
+.lockBox button{
+  padding:10px 25px;
+  border:none;
+  border-radius:20px;
+  background:#ff4d6d;
+  color:white;
+  font-size:16px;
+}
+
+/* 🎉 CELEBRATION (HIDDEN INITIALLY) */
+#celebration{display:none}
+
+/* CARD */
+.card{
+  margin:20px auto;
+  background:white;
+  border-radius:20px;
+  padding:20px;
+  width:92%;
+  max-width:380px;
+  text-align:center;
+  box-shadow:0 10px 25px rgba(0,0,0,.2);
+}
+
+h1{color:#ff4d6d}
+p{color:#444}
+
+/* 🎂 CAKE */
+.cake{margin:20px auto;width:150px}
+.layer{height:35px;background:#ffb703;border-radius:10px;margin-bottom:5px}
+.candle{width:10px;height:25px;background:red;margin:0 auto;position:relative}
+.flame{
+  width:12px;height:12px;background:orange;border-radius:50%;
+  position:absolute;top:-12px;left:-1px;
+  animation:flicker .5s infinite alternate;
+}
+@keyframes flicker{to{transform:scale(1.2)}}
+
+/* 📸 PHOTO STORY */
+.photo{
+  margin-bottom:30px;
+  opacity:0;
+  transform:translateY(40px);
+  transition:1s;
+}
+.photo.show{
+  opacity:1;
+  transform:translateY(0);
+}
+.photo img{
+  width:100%;
+  border-radius:15px;
+}
+.caption{
+  font-size:14px;
+  margin-top:6px;
+  color:#555;
+}
+
+/* BUTTON */
+.btn{
+  padding:12px 22px;
+  border:none;
+  border-radius:25px;
+  background:#ff4d6d;
+  color:white;
+  margin:15px 0;
+}
+
+/* 🎊 CONFETTI */
+canvas{
+  position:fixed;
+  top:0;
+  left:0;
+  pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🔒 PASSWORD -->
+<div id="lockScreen">
+  <div class="lockBox">
+    <h2>🔒 Enter Password</h2>
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="unlock()">Next ➜</button>
+  </div>
+</div>
+
+<canvas id="confetti"></canvas>
+<audio id="music" src="c:\Users\shivaraj\Music\3 movie bgm.mpeg" loop></audio>
+
+<!-- 🎉 CELEBRATION -->
+<div id="celebration">
+  <div class="card">
+    <h1>🎉 Happy Birthday 🎂</h1>
+    <p id="typingText"></p>
+
+    <div class="cake">
+      <div class="candle"><div class="flame"></div></div>
+      <div class="layer"></div>
+      <div class="layer"></div>
+      <div class="layer"></div>
+    </div>
+
+    <button class="btn" id="celebrateBtn" onclick="startCelebration(); this.disabled=true;">
+      Celebrate 🎊
+    </button>
+
+    <div class="photo">
+      <img src="c:\Users\shivaraj\OneDrive\Desktop\all in one\m photos(child)\file_0000000062287206bd1835071ebda47b.png">
+      <div class="caption">💌 A memory close to my heart</div>
+    </div>
+    <div class="photo">
+      <img src="c:\Users\shivaraj\OneDrive\Desktop\all in one\m photos(child)\file_00000000ee0071fa8792f7c22d392b49 (1).png">
+      <div class="caption">💖 A moment I’ll never forget</div>
+    </div>
+    <div class="photo">
+      <img src="c:\Users\shivaraj\OneDrive\Desktop\all in one\m photos(yellow)\photo1.jpg.jpeg">
+      <div class="caption">✨ Always special</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* 🔑 PASSWORD */
+function unlock(){
+  if(password.value === "mmmm"){ // CHANGE PASSWORD HERE
+    lockScreen.style.display="none";
+    celebration.style.display="block";
+    typeText();
+    revealPhotos();
+  }else{
+    alert("Wrong password ❌");
+  }
+}
+
+/* ✍️ TYPING TEXT */
+const message="May your day be full of smiles, love & beautiful memories 💖";
+let i=0;
+function typeText(){
+  if(i<message.length){
+    typingText.innerHTML+=message.charAt(i);
+    i++;
+    setTimeout(typeText,60);
+  }
+}
+
+/* 📸 PHOTO AUTO OPEN */
+const photos=document.querySelectorAll(".photo");
+function revealPhotos(){
+  photos.forEach((p,index)=>{
+    setTimeout(()=>p.classList.add("show"), index*900);
+  });
+}
+
+/* 🎊 CONFETTI ONLY ON CELEBRATE */
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+let confetti=[], confettiInterval;
+
+function startCelebration(){
+  document.getElementById("music").play();
+
+  confetti=[];
+  for(let i=0;i<200;i++){
+    confetti.push({
+      x:Math.random()*canvas.width,
+      y:Math.random()*canvas.height,
+      r:Math.random()*6+4,
+      d:Math.random()*4+2,
+      c:`hsl(${Math.random()*360},100%,60%)`
+    });
+  }
+
+  clearInterval(confettiInterval);
+  confettiInterval=setInterval(drawConfetti,20);
+
+  // STOP CONFETTI AFTER 6 SECONDS
+  setTimeout(()=>{
+    clearInterval(confettiInterval);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+  },6000);
+}
+
+function drawConfetti(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  confetti.forEach(p=>{
+    ctx.beginPath();
+    ctx.fillStyle=p.c;
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+    p.y+=p.d;
+    if(p.y>canvas.height)p.y=0;
+  });
+}
+</script>
+
+</body>
+</html>
